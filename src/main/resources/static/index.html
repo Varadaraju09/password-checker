@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Security Analyzer</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h2>Security Analyzer</h2>
+        <p class="subtitle">Enterprise-grade password validation</p>
+
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Enter password to analyze" />
+        </div>
+
+        <button onclick="checkPassword()">Analyze Security</button>
+
+        <div class="result" id="result"></div>
+    </div>
+</div>
+
+<script>
+    function checkPassword() {
+        const password = document.getElementById("password").value;
+
+        if (!password) {
+            alert("Please enter a password to analyze");
+            return;
+        }
+
+        let score = 0;
+        const issues = [];
+        const tips = [];
+
+        if (password.length >= 8) score += 20;
+        else issues.push("Minimum 8 characters required");
+
+        if (password.length >= 12) score += 10;
+        if (password.length >= 16) score += 10;
+
+        if (/[a-z]/.test(password)) score += 15;
+        else issues.push("Lowercase letters missing");
+
+        if (/[A-Z]/.test(password)) score += 15;
+        else issues.push("Uppercase letters missing");
+
+        if (/[0-9]/.test(password)) score += 15;
+        else issues.push("Numeric characters missing");
+
+        if (/[^a-zA-Z0-9]/.test(password)) score += 15;
+        else issues.push("Special characters missing");
+
+        const uniqueChars = new Set(password).size;
+        if (uniqueChars > password.length * 0.7) score += 10;
+
+        let strength, strengthClass, strengthWidth;
+        if (score < 40) {
+            strength = "Weak";
+            strengthClass = "weak";
+            strengthWidth = "25%";
+            tips.push("Increase password length to 12+ characters");
+            tips.push("Add uppercase, lowercase, numbers and symbols");
+        } else if (score < 70) {
+            strength = "Moderate";
+            strengthClass = "medium";
+            strengthWidth = "50%";
+            tips.push("Extend to 16+ characters");
+            tips.push("Use diverse symbols");
+        } else if (score < 90) {
+            strength = "Strong";
+            strengthClass = "strong";
+            strengthWidth = "75%";
+            tips.push("Excellent security level");
+        } else {
+            strength = "Maximum";
+            strengthClass = "godmode";
+            strengthWidth = "100%";
+            tips.push("Enterprise-grade password");
+        }
+
+        const resultDiv = document.getElementById("result");
+        resultDiv.innerHTML = `
+            <div class="strength-indicator">
+                <div class="strength-label ${strengthClass}">${strength}</div>
+                <div class="strength-bar-container">
+                    <div class="strength-fill ${strengthClass}" style="width:${strengthWidth}"></div>
+                </div>
+            </div>
+
+            <div class="score-section">
+                <div class="score-circle ${strengthClass}">
+                    ${score}
+                    <span class="score-label">SCORE</span>
+                </div>
+            </div>
+
+            ${issues.length ? `
+            <div class="info-section">
+                <div class="info-title">Security Issues</div>
+                <div class="info-content">${issues.join(" • ")}</div>
+            </div>` : ""}
+
+            <div class="info-section">
+                <div class="info-title">Recommendations</div>
+                <div class="info-content">${tips.join(" • ")}</div>
+            </div>
+        `;
+
+        resultDiv.classList.add("show");
+    }
+
+    document.getElementById("password").addEventListener("keypress", e => {
+        if (e.key === "Enter") checkPassword();
+    });
+</script>
+
+</body>
+</html>
