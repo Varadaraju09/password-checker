@@ -1,0 +1,2 @@
+This project is a simple cybersecurity-focused web application that analyzes password strength and provides actionable security feedback.
+The backend is built using Java Spring Boot with a REST API, while the frontend uses HTML and CSS for user interaction. The application evaluates passwords based on industry-recommended best practices such as length, use of uppercase and lowercase letters, numbers, special characters, and character diversity.
